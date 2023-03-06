@@ -10,8 +10,8 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+    private Integer currentId = 0;
     private final HashMap<Integer, User> users = new HashMap<>();
-    private static Integer currentId;
 
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
@@ -38,9 +38,6 @@ public class UserService {
     }
 
     private Integer nextId() {
-        if (currentId == null) {
-            currentId = 0;
-        }
         return ++currentId;
     }
 
