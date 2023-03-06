@@ -9,6 +9,7 @@ import java.time.LocalDate;
 public class User {
     private Integer id;
 
+    @NotEmpty(message = "Email should not be empty")
     @Email(message = "Email is not valid")
     private String email;
 

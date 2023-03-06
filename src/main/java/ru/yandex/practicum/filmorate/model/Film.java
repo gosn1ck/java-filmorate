@@ -9,9 +9,9 @@ import java.time.LocalDate;
 
 @Data
 public class Film {
+
     private Integer id;
 
-    @NotNull(message = "Name should not be null")
     @NotEmpty(message = "Name should not be empty")
     private String name;
 
