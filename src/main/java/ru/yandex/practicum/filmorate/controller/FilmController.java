@@ -26,33 +26,33 @@ public class FilmController {
     }
 
     @GetMapping
-    public List<Film> getFilms(){
+    public List<Film> getFilms() {
+        log.info("Get all films");
         return filmsService.getFilms();
     }
 
-    @PostMapping(consumes="application/json")
+    @PostMapping(consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Film> registerFilm(@Valid @RequestBody Film film, Errors errors) {
         log.info("New film registration {}", film);
         if (errors.hasErrors()) {
+            log.info("Error during new film registration: {}", errors.getAllErrors());
             return ResponseEntity.internalServerError().body(film);
         }
 
         return ResponseEntity.ok(filmsService.addFilm(film));
     }
 
-    @PutMapping(consumes="application/json")
+    @PutMapping(consumes = "application/json")
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film, Errors errors) {
         log.info("Update film {}", film);
         if (errors.hasErrors()) {
+            log.info("Error during update film: {}", errors.getAllErrors());
             return ResponseEntity.internalServerError().body(film);
         }
 
         Optional<Film> optFilm = filmsService.updateFilm(film);
-        if (!optFilm.isPresent()) {
-            return ResponseEntity.internalServerError().body(film);
-        }
+        return optFilm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.internalServerError().body(film));
 
-        return ResponseEntity.ok(optFilm.get());
     }
 }

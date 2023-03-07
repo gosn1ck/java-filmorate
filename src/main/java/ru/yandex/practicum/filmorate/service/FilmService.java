@@ -10,8 +10,8 @@ import java.util.Optional;
 
 @Service
 public class FilmService {
+    private Integer currentId = 0;
     private final HashMap<Integer, Film> films = new HashMap<>();
-    private static Integer currentId;
     public List<Film> getFilms() {
         return new ArrayList<>(films.values());
     }
@@ -32,9 +32,6 @@ public class FilmService {
     }
 
     private Integer nextId() {
-        if (currentId == null) {
-            currentId = 0;
-        }
         return ++currentId;
     }
 }
