@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -40,7 +41,7 @@ class FilmServiceTest {
     @DisplayName("Фильм проходит проверку валидации")
     @Test
     void shouldAddValidFilm() {
-        final var film = new Film();
+        val film = new Film();
         film.setName(FILM_NAME);
         film.setDescription(FILM_DESCRIPTION);
         film.setReleaseDate(RELEASE_DATE);
@@ -54,7 +55,7 @@ class FilmServiceTest {
     @DisplayName("Фильм не должен проходить валидацию с пустым названием")
     @Test
     void shouldNotAddFilmEmptyName() {
-        final var filmEmptyName = new Film();
+        val filmEmptyName = new Film();
         filmEmptyName.setName("");
         filmEmptyName.setDescription(FILM_DESCRIPTION);
         filmEmptyName.setReleaseDate(RELEASE_DATE);
@@ -64,7 +65,7 @@ class FilmServiceTest {
         assertTrue(validates.size() > 0);
         assertEquals(validates.stream().findFirst().get().getMessage(), "Name should not be empty");
 
-        final var filmNullName = new Film();
+        val filmNullName = new Film();
         filmNullName.setDescription(FILM_DESCRIPTION);
         filmNullName.setReleaseDate(RELEASE_DATE);
         filmNullName.setDuration(DURATION);
@@ -78,7 +79,7 @@ class FilmServiceTest {
     @DisplayName("Фильм не должен проходить валидацию с длинным описанием")
     @Test
     void shouldNotAddFilmDescription201Symbols() {
-        final var film = new Film();
+        val film = new Film();
         film.setName(FILM_NAME);
         film.setDescription(DESCRIPTION_201_SYMBOLS);
         film.setReleaseDate(RELEASE_DATE);
@@ -94,7 +95,7 @@ class FilmServiceTest {
     @DisplayName("Фильм должен проходить валидацию с максимальной длиной описания")
     @Test
     void shouldAddFilmDescription200Symbols() {
-        final var film = new Film();
+        val film = new Film();
         film.setName(FILM_NAME);
         film.setDescription(DESCRIPTION_200_SYMBOLS);
         film.setReleaseDate(RELEASE_DATE);
@@ -108,7 +109,7 @@ class FilmServiceTest {
     @DisplayName("Фильм не должен проходить валидацию с датой релиза до дня рождения кино")
     @Test
     void shouldNotAddFilmLessThenCinemaReleaseDate() {
-        final var film1890 = new Film();
+        val film1890 = new Film();
         film1890.setName(FILM_NAME);
         film1890.setDescription(FILM_DESCRIPTION);
         film1890.setReleaseDate(LocalDate.of(1890, 3, 25));
@@ -119,7 +120,7 @@ class FilmServiceTest {
         assertEquals(validates.stream().findFirst().get().getMessage(),
                 "release date must be over 28.12.1895");
 
-        final var film1967 = new Film();
+        val film1967 = new Film();
         film1967.setName(FILM_NAME);
         film1967.setDescription(FILM_DESCRIPTION);
         film1967.setReleaseDate(LocalDate.of(1895, 12, 27));
@@ -135,7 +136,7 @@ class FilmServiceTest {
     @DisplayName("Фильм не должен проходить валидацию нулевой или отрицательной длительностью")
     @Test
     void shouldNotAddFilmNegativeDuration() {
-        final var filmNegative = new Film();
+        val filmNegative = new Film();
         filmNegative.setName(FILM_NAME);
         filmNegative.setDescription(FILM_DESCRIPTION);
         filmNegative.setReleaseDate(RELEASE_DATE);
@@ -146,7 +147,7 @@ class FilmServiceTest {
         assertEquals(validates.stream().findFirst().get().getMessage(),
                 "Duration must be positive number");
 
-        final var filmZero = new Film();
+        val filmZero = new Film();
         filmZero.setName(FILM_NAME);
         filmZero.setDescription(FILM_DESCRIPTION);
         filmZero.setReleaseDate(RELEASE_DATE);

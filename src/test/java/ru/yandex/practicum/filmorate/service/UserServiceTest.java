@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
@@ -30,7 +31,7 @@ class UserServiceTest {
     @DisplayName("Пользователь проходит проверку валидации")
     @Test
     void shouldAddValidUser() {
-        final var user = new User();
+        val user = new User();
         user.setName(NAME);
         user.setLogin(LOGIN);
         user.setEmail(EMAIL);
@@ -44,7 +45,7 @@ class UserServiceTest {
     @DisplayName("Пользователь не должен проходить валидацию с не корректным email")
     @Test
     void shouldNotAddUserInvalidEmail() {
-        final var userNoAt = new User();
+        val userNoAt = new User();
         userNoAt.setName(NAME);
         userNoAt.setLogin(LOGIN);
         userNoAt.setEmail("mail.ru");
@@ -54,7 +55,7 @@ class UserServiceTest {
         assertTrue(validates.size() > 0);
         assertEquals(validates.stream().findFirst().get().getMessage(), "Email is not valid");
 
-        final var userAtLastChar = new User();
+        val userAtLastChar = new User();
         userAtLastChar.setName(NAME);
         userAtLastChar.setLogin(LOGIN);
         userAtLastChar.setEmail("mail.ru@");
@@ -64,7 +65,7 @@ class UserServiceTest {
         assertTrue(validates.size() > 0);
         assertEquals(validates.stream().findFirst().get().getMessage(), "Email is not valid");
 
-        final var userEmptyEmail = new User();
+        val userEmptyEmail = new User();
         userEmptyEmail.setName(NAME);
         userEmptyEmail.setLogin(LOGIN);
         userEmptyEmail.setEmail("");
@@ -74,7 +75,7 @@ class UserServiceTest {
         assertTrue(validates.size() > 0);
         assertEquals(validates.stream().findFirst().get().getMessage(), "Email should not be empty");
 
-        final var userNullEmail = new User();
+        val userNullEmail = new User();
         userNullEmail.setName(NAME);
         userNullEmail.setLogin(LOGIN);
         userNullEmail.setEmail("");
@@ -89,7 +90,7 @@ class UserServiceTest {
     @DisplayName("Пользователь не должен проходить валидацию с не корректный логином")
     @Test
     void shouldNotAddUserInvalidLogin() {
-        final var userSpaceLogin = new User();
+        val userSpaceLogin = new User();
         userSpaceLogin.setName(NAME);
         userSpaceLogin.setLogin("dolore ullamco");
         userSpaceLogin.setEmail(EMAIL);
@@ -99,7 +100,7 @@ class UserServiceTest {
         assertTrue(validates.size() > 0);
         assertEquals(validates.stream().findFirst().get().getMessage(), "Login should not contains space");
 
-        final var userEmptyLogin = new User();
+        val userEmptyLogin = new User();
         userEmptyLogin.setName(NAME);
         userEmptyLogin.setLogin("");
         userEmptyLogin.setEmail(EMAIL);
@@ -114,7 +115,7 @@ class UserServiceTest {
     @DisplayName("Пользователь не должен проходить валидацию c будущей дату рождения")
     @Test
     void shouldNotAddUserInvalidDateBirth() {
-        final var userFuture = new User();
+        val userFuture = new User();
         userFuture.setName(NAME);
         userFuture.setLogin(LOGIN);
         userFuture.setEmail(EMAIL);
@@ -125,7 +126,7 @@ class UserServiceTest {
         assertEquals(validates.stream().findFirst().get().getMessage(),
                 "Birthday should be in the past");
 
-        final var userTomorrow = new User();
+        val userTomorrow = new User();
         userTomorrow.setName(NAME);
         userTomorrow.setLogin(LOGIN);
         userTomorrow.setEmail(EMAIL);
