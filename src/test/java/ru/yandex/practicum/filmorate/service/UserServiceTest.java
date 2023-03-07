@@ -108,7 +108,9 @@ class UserServiceTest {
 
         validates = validator.validate(userEmptyLogin);
         assertTrue(validates.size() > 0);
-        assertEquals(validates.stream().findFirst().get().getMessage(), "Login should not contains space");
+        assertEquals(validates.stream()
+                        .filter(v -> v.getMessage().equals("Login should not contains space"))
+                        .findFirst().get().getMessage(), "Login should not contains space");
 
     }
 
