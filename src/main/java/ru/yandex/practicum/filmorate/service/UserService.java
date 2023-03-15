@@ -1,20 +1,24 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private Integer currentId = 0;
-    private final HashMap<Integer, User> users = new HashMap<>();
+
+    @Qualifier("InMemory")
+    private final UserRepository userRepository;
 
     public List<User> getUsers() {
-        return new ArrayList<>(users.values());
+        return userRepository.findAll();
     }
 
     public User addUser(User user) {
@@ -24,17 +28,12 @@ public class UserService {
             user.setName(user.getLogin());
         }
 
-        users.put(user.getId(), user);
+        userRepository.save(user);
         return user;
     }
 
     public Optional<User> updateUser(User user) {
-        if (users.containsKey(user.getId())) {
-            users.put(user.getId(), user);
-            return Optional.of(user);
-        }
-
-        return Optional.empty();
+        return userRepository.update(user);
     }
 
     private Integer nextId() {
