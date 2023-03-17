@@ -35,4 +35,13 @@ public class InMemoryUserRepository implements UserRepository {
 
         return Optional.empty();
     }
+
+    @Override
+    public Optional<User> findById(Integer id) {
+        if (users.containsKey(id)) {
+            return Optional.of(users.get(id));
+        }
+
+        return Optional.empty();
+    }
 }

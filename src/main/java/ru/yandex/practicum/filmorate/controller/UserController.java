@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -50,4 +51,51 @@ public class UserController {
         return optUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.internalServerError().body(user));
 
     }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<User> getUser(@PathVariable("id") Integer userId) {
+        log.info("Get user id: {}", userId);
+        Optional<User> optUser = userService.getUser(userId);
+        return optUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(path = "/{id}/friends")
+    public List<User> friends(@PathVariable("id") Integer userId) {
+        log.info("User's friends with id: {}", userId);
+        return userService.friends(userId);
+    }
+
+    @PutMapping(path = "/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable("id") Integer userId,
+                          @PathVariable("friendId") Integer friendId) {
+
+        log.info("Add to id: {}, friend: {}", userId, friendId);
+        if (userId.equals(friendId)) {
+            throw new InternalServerException("impossible to add friend with same id");
+        }
+
+        userService.addFriend(userId, friendId);
+
+    }
+
+    @DeleteMapping(path = "/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable("id") Integer userId,
+                             @PathVariable("friendId") Integer friendId) {
+
+        log.info("Remove from id: {}, friend: {}", userId, friendId);
+        if (userId.equals(friendId)) {
+            throw new InternalServerException("impossible to remove friend with same id");
+        }
+
+        userService.removeFriend(userId, friendId);
+
+    }
+
+    @GetMapping(path = "{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable("id") Integer userId,
+                                       @PathVariable("otherId") Integer otherId) {
+        log.info("Get common friends");
+        return userService.getCommonFriends(userId, otherId);
+    }
+
 }
