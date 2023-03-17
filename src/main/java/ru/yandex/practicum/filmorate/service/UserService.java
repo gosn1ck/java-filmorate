@@ -86,7 +86,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public List<User> getCommonFriends(Integer userId, Integer otherId) {
+    public List<User> commonFriends(Integer userId, Integer otherId) {
         var optUser = userRepository.findById(userId);
         if (optUser.isEmpty()) {
             throw new NotFoundException("user with id %d not found", userId);
