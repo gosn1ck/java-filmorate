@@ -35,4 +35,14 @@ public class InMemoryFilmRepository implements FilmRepository {
 
         return Optional.empty();
     }
+
+    @Override
+    public Optional<Film> findById(Integer id) {
+        if (films.containsKey(id)) {
+            return Optional.of(films.get(id));
+        }
+
+        return Optional.empty();
+    }
+
 }

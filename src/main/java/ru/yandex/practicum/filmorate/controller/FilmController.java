@@ -51,4 +51,40 @@ public class FilmController {
         return optFilm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.internalServerError().body(film));
 
     }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<Film> getUser(@PathVariable("id") Integer id) {
+        log.info("Get film by id: {}", id);
+        Optional<Film> optFilm = filmsService.getFilm(id);
+        return optFilm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping(path = "/{id}/like/{userId}")
+    public void addLike(@PathVariable("id") Integer filmId,
+                          @PathVariable("userId") Integer userId) {
+
+        log.info("Add like to film id: {}, user id: {}", filmId, userId);
+        filmsService.addLike(filmId, userId);
+
+    }
+
+    @DeleteMapping(path = "/{id}/like/{userId}")
+    public void removeLike(@PathVariable("id") Integer filmId,
+                        @PathVariable("userId") Integer userId) {
+
+        log.info("Remove like from id: {}, user id: {}", filmId, userId);
+        filmsService.removeLike(filmId, userId);
+
+    }
+
+    @GetMapping(path = "/popular")
+    public List<Film> popularFilms(
+            @RequestParam(value = "count", defaultValue = "10", required = false) Integer count) {
+        log.info("Get popular films with count {}", count);
+        if (count <= 0) {
+            throw new IllegalArgumentException("Count must be greater than zero");
+        }
+        return filmsService.popularFilms(count);
+    }
+
 }
