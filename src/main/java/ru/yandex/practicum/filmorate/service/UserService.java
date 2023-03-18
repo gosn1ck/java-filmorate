@@ -43,14 +43,10 @@ public class UserService {
 
     public void addFriend(Integer userId, Integer friendId) {
         var optUser = userRepository.findById(userId);
-        if (optUser.isEmpty()) {
-            throw new NotFoundException("user with id %d not found", userId);
-        }
+        optUser.orElseThrow(() -> new NotFoundException("user with id %d not found", userId));
 
         var optFriend = userRepository.findById(friendId);
-        if (optFriend.isEmpty()) {
-            throw new NotFoundException("friend with id %d not found", friendId);
-        }
+        optFriend.orElseThrow(() -> new NotFoundException("friend with id %d not found", friendId));
 
         optUser.get().getFriends().add(optFriend.get().getId());
         optFriend.get().getFriends().add(optUser.get().getId());
@@ -58,14 +54,10 @@ public class UserService {
 
     public void removeFriend(Integer userId, Integer friendId) {
         var optUser = userRepository.findById(userId);
-        if (optUser.isEmpty()) {
-            throw new NotFoundException("user with id %d not found", userId);
-        }
+        optUser.orElseThrow(() -> new NotFoundException("user with id %d not found", userId));
 
         var optFriend = userRepository.findById(friendId);
-        if (optFriend.isEmpty()) {
-            throw new NotFoundException("friend with id %d not found", friendId);
-        }
+        optFriend.orElseThrow(() -> new NotFoundException("friend with id %d not found", friendId));
 
         optUser.get().getFriends().remove(optFriend.get().getId());
         optFriend.get().getFriends().remove(optUser.get().getId());
@@ -74,9 +66,7 @@ public class UserService {
 
     public List<User> friends(Integer userId) {
         var optUser = userRepository.findById(userId);
-        if (optUser.isEmpty()) {
-            throw new NotFoundException("user with id %d not found", userId);
-        }
+        optUser.orElseThrow(() -> new NotFoundException("user with id %d not found", userId));
 
         var user = optUser.get();
         return user.getFriends().stream()
@@ -88,14 +78,10 @@ public class UserService {
 
     public List<User> commonFriends(Integer userId, Integer otherId) {
         var optUser = userRepository.findById(userId);
-        if (optUser.isEmpty()) {
-            throw new NotFoundException("user with id %d not found", userId);
-        }
+        optUser.orElseThrow(() -> new NotFoundException("user with id %d not found", userId));
 
         var optOther = userRepository.findById(otherId);
-        if (optOther.isEmpty()) {
-            throw new NotFoundException("man with id %d not found", otherId);
-        }
+        optOther.orElseThrow(() -> new NotFoundException("man with id %d not found", otherId));
 
         var common = optUser.get().getFriends().stream()
                 .map(userRepository::findById)
