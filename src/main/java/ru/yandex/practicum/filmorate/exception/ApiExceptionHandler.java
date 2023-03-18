@@ -26,4 +26,11 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(exception, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<ApiException> handleException(IllegalArgumentException e) {
+        log.error(e.getMessage(), e);
+        ApiException exception = new ApiException(e.getMessage(), HttpStatus.BAD_REQUEST, ZonedDateTime.now());
+        return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+    }
+
 }
