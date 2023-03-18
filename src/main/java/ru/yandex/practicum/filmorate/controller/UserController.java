@@ -53,16 +53,16 @@ public class UserController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<User> getUser(@PathVariable("id") Integer userId) {
-        log.info("Get user by id: {}", userId);
-        Optional<User> optUser = userService.getUser(userId);
+    public ResponseEntity<User> getUser(@PathVariable("id") Integer id) {
+        log.info("Get user by id: {}", id);
+        Optional<User> optUser = userService.getUser(id);
         return optUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping(path = "/{id}/friends")
-    public List<User> friends(@PathVariable("id") Integer userId) {
-        log.info("User's friends with id: {}", userId);
-        return userService.friends(userId);
+    public List<User> friends(@PathVariable("id") Integer id) {
+        log.info("User's friends with id: {}", id);
+        return userService.friends(id);
     }
 
     @PutMapping(path = "/{id}/friends/{friendId}")

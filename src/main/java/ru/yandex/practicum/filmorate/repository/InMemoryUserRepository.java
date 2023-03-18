@@ -44,4 +44,5 @@ public class InMemoryUserRepository implements UserRepository {
 
         return Optional.empty();
     }
+
 }

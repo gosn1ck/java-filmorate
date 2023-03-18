@@ -37,8 +37,8 @@ public class UserService {
         return userRepository.update(user);
     }
 
-    public Optional<User> getUser(Integer userId) {
-        return userRepository.findById(userId);
+    public Optional<User> getUser(Integer id) {
+        return userRepository.findById(id);
     }
 
     public void addFriend(Integer userId, Integer friendId) {
@@ -61,12 +61,11 @@ public class UserService {
 
         optUser.get().getFriends().remove(optFriend.get().getId());
         optFriend.get().getFriends().remove(optUser.get().getId());
-
     }
 
-    public List<User> friends(Integer userId) {
-        var optUser = userRepository.findById(userId);
-        optUser.orElseThrow(() -> new NotFoundException("user with id %d not found", userId));
+    public List<User> friends(Integer id) {
+        var optUser = userRepository.findById(id);
+        optUser.orElseThrow(() -> new NotFoundException("user with id %d not found", id));
 
         var user = optUser.get();
         return user.getFriends().stream()
@@ -100,4 +99,5 @@ public class UserService {
     private Integer nextId() {
         return ++currentId;
     }
+
 }
