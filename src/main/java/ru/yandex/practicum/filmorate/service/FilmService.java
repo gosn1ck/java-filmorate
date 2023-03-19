@@ -26,8 +26,7 @@ public class FilmService {
 
     public Film addFilm(Film film) {
         film.setId(nextId());
-        filmRepository.save(film);
-        return film;
+        return filmRepository.save(film);
     }
 
     public Optional<Film> updateFilm(Film film) {
