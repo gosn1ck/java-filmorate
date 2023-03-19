@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.exception;
+package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;
