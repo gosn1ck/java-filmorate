@@ -67,8 +67,7 @@ public class UserController {
 
     @PutMapping(path = "/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void addFriend(@PathVariable("id") Integer userId,
-                          @PathVariable("friendId") Integer friendId) {
+    public void addFriend(@PathVariable("id") Integer userId, @PathVariable("friendId") Integer friendId) {
 
         log.info("Add to id: {}, friend: {}", userId, friendId);
         if (userId.equals(friendId)) {
@@ -81,8 +80,7 @@ public class UserController {
 
     @DeleteMapping(path = "/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeFriend(@PathVariable("id") Integer userId,
-                             @PathVariable("friendId") Integer friendId) {
+    public void removeFriend(@PathVariable("id") Integer userId, @PathVariable("friendId") Integer friendId) {
 
         log.info("Remove from id: {}, friend: {}", userId, friendId);
         if (userId.equals(friendId)) {
@@ -94,8 +92,7 @@ public class UserController {
     }
 
     @GetMapping(path = "{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable("id") Integer userId,
-                                       @PathVariable("otherId") Integer otherId) {
+    public List<User> getCommonFriends(@PathVariable("id") Integer userId, @PathVariable("otherId") Integer otherId) {
         log.info("Get common user id {} friends with id {}", userId, otherId);
         return userService.commonFriends(userId, otherId);
     }
