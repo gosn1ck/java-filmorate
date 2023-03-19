@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.InMemoryFilmRepository;
 import ru.yandex.practicum.filmorate.repository.InMemoryUserRepository;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
+import ru.yandex.practicum.filmorate.service.friend.InMemoryFriendManager;
 
 import java.time.LocalDate;
 
@@ -32,7 +33,7 @@ class FilmServiceTest {
     @Test
     void beforeEach() {
         UserRepository userRepository = new InMemoryUserRepository();
-        userService = new UserService(userRepository);
+        userService = new UserService(userRepository, new InMemoryFriendManager(userRepository));
         filmService = new FilmService(new InMemoryFilmRepository(), userRepository);
     }
 
