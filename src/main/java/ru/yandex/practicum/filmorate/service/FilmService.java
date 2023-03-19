@@ -3,15 +3,12 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.repository.FilmRepository;
-import ru.yandex.practicum.filmorate.repository.UserRepository;
+import ru.yandex.practicum.filmorate.service.like.LikeManager;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +18,7 @@ public class FilmService {
     @Qualifier("InMemory")
     private final FilmRepository filmRepository;
     @Qualifier("InMemory")
-    private final UserRepository userRepository;
+    private final LikeManager likeManager;
 
     public List<Film> getFilms() {
         return filmRepository.findAll();
@@ -42,35 +39,15 @@ public class FilmService {
     }
 
     public void addLike(Integer filmId, Integer userId) {
-        var optFilm = filmRepository.findById(filmId);
-        optFilm.orElseThrow(() -> new NotFoundException("film with id %d not found", filmId));
-
-        var optUser = userRepository.findById(userId);
-        optUser.orElseThrow(() -> new NotFoundException("user with id %d not found", userId));
-
-        optFilm.get().getLikes().add(optUser.get().getId());
-
+        likeManager.add(filmId, userId);
     }
 
     public void removeLike(Integer filmId, Integer userId) {
-        var optFilm = filmRepository.findById(filmId);
-        optFilm.orElseThrow(() -> new NotFoundException("film with id %d not found", filmId));
-
-        var optUser = userRepository.findById(userId);
-        optUser.orElseThrow(() -> new NotFoundException("user with id %d not found", userId));
-
-        optFilm.get().getLikes().remove(optUser.get().getId());
-
+        likeManager.remove(filmId, userId);
     }
 
     public List<Film> popularFilms(Integer count) {
-        var films = filmRepository.findAll();
-        Comparator<Film> comparator = Comparator.comparingInt(film -> film.getLikes().size());
-        Comparator<Film> reversed = comparator.reversed();
-        return films.stream()
-                .sorted(reversed)
-                .limit(count)
-                .collect(Collectors.toList());
+        return likeManager.popularFilms(count);
     }
 
     private Integer nextId() {
