@@ -32,7 +32,7 @@ public class FilmController {
     public ResponseEntity<Film> registerFilm(@Valid @RequestBody Film film, Errors errors) {
         log.info("New film registration {}", film);
         if (errors.hasErrors()) {
-            log.info("Error during new film registration: {}", errors.getAllErrors());
+            log.error("Error during new film registration: {}", errors.getAllErrors());
             return ResponseEntity.internalServerError().body(film);
         }
 
@@ -43,7 +43,7 @@ public class FilmController {
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film, Errors errors) {
         log.info("Update film {}", film);
         if (errors.hasErrors()) {
-            log.info("Error during update film: {}", errors.getAllErrors());
+            log.error("Error during update film: {}", errors.getAllErrors());
             return ResponseEntity.internalServerError().body(film);
         }
 

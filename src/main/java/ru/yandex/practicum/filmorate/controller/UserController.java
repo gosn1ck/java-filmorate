@@ -33,7 +33,7 @@ public class UserController {
     public ResponseEntity<User> registerUser(@Valid @RequestBody User user, Errors errors) {
         log.info("New user registration {}", user);
         if (errors.hasErrors()) {
-            log.info("Error during new user registration: {}", errors.getAllErrors());
+            log.error("Error during new user registration: {}", errors.getAllErrors());
             return ResponseEntity.internalServerError().body(user);
         }
         return ResponseEntity.ok(userService.addUser(user));
@@ -43,7 +43,7 @@ public class UserController {
     public ResponseEntity<User> updateUser(@Valid @RequestBody User user, Errors errors) {
         log.info("Update user {}", user);
         if (errors.hasErrors()) {
-            log.info("Error during update user: {}", errors.getAllErrors());
+            log.error("Error during update user: {}", errors.getAllErrors());
             return ResponseEntity.internalServerError().body(user);
         }
 
