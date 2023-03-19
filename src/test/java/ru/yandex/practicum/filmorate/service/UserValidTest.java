@@ -38,7 +38,7 @@ class UserValidTest {
         user.setBirthday(BIRTHDAY);
 
         Set<ConstraintViolation<User>> validates = validator.validate(user);
-        assertEquals(true, validates.size() == 0);
+        assertEquals(0, validates.size());
 
     }
 

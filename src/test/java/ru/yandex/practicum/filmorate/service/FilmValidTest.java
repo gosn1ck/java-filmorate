@@ -48,7 +48,7 @@ class FilmValidTest {
         film.setDuration(DURATION);
 
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
-        assertTrue(validates.size() == 0);
+        assertEquals(0, validates.size());
 
     }
 
@@ -102,7 +102,7 @@ class FilmValidTest {
         film.setDuration(DURATION);
 
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
-        assertTrue(validates.size() == 0);
+        assertEquals(0, validates.size());
 
     }
 
