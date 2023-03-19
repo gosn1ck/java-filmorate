@@ -3,18 +3,19 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class FilmValidTest {
 
     private static final String FILM_DESCRIPTION = "Chronicles the experiences of a formerly successful banker as  "
@@ -32,11 +33,8 @@ class FilmValidTest {
     public static final LocalDate RELEASE_DATE = LocalDate.of(1967, 3, 25);
     public static final int DURATION = 100;
     public static final String FILM_NAME = "The Shawshank Redemption";
-    private static final Validator validator;
-    static {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        validator = validatorFactory.usingContext().getValidator();
-    }
+    @Autowired
+    private Validator validator;
 
     @DisplayName("Фильм проходит проверку валидации")
     @Test

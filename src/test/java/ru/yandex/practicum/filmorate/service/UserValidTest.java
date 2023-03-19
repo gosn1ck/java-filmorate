@@ -3,30 +3,28 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SpringBootTest
 class UserValidTest {
 
-    private static final Validator validator;
     private static final String NAME = "Nick Name";
     private static final String LOGIN = "dolore";
     private static final String EMAIL = "mail@mail.ru";
     private static final LocalDate BIRTHDAY = LocalDate.of(1946, 8, 20);
 
-    static {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        validator = validatorFactory.usingContext().getValidator();
-    }
+    @Autowired
+    private Validator validator;
 
     @DisplayName("Пользователь проходит проверку валидации")
     @Test
