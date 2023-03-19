@@ -60,6 +60,7 @@ public class FilmController {
     }
 
     @PutMapping(path = "/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addLike(@PathVariable("id") Integer filmId,
                           @PathVariable("userId") Integer userId) {
 
@@ -69,6 +70,7 @@ public class FilmController {
     }
 
     @DeleteMapping(path = "/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeLike(@PathVariable("id") Integer filmId,
                         @PathVariable("userId") Integer userId) {
 

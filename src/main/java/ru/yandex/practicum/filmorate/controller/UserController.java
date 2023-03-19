@@ -66,6 +66,7 @@ public class UserController {
     }
 
     @PutMapping(path = "/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addFriend(@PathVariable("id") Integer userId,
                           @PathVariable("friendId") Integer friendId) {
 
@@ -79,6 +80,7 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeFriend(@PathVariable("id") Integer userId,
                              @PathVariable("friendId") Integer friendId) {
 
