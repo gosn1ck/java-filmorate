@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -15,15 +16,11 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     public List<User> getUsers() {
@@ -36,7 +33,7 @@ public class UserController {
     public ResponseEntity<User> registerUser(@Valid @RequestBody User user, Errors errors) {
         log.info("New user registration {}", user);
         if (errors.hasErrors()) {
-            log.info("Error during new user registration: {}", errors.getAllErrors());
+            log.error("Error during new user registration: {}", errors.getAllErrors());
             return ResponseEntity.internalServerError().body(user);
         }
         return ResponseEntity.ok(userService.addUser(user));
@@ -46,7 +43,7 @@ public class UserController {
     public ResponseEntity<User> updateUser(@Valid @RequestBody User user, Errors errors) {
         log.info("Update user {}", user);
         if (errors.hasErrors()) {
-            log.info("Error during update user: {}", errors.getAllErrors());
+            log.error("Error during update user: {}", errors.getAllErrors());
             return ResponseEntity.internalServerError().body(user);
         }
 
@@ -54,4 +51,50 @@ public class UserController {
         return optUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.internalServerError().body(user));
 
     }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<User> getUser(@PathVariable("id") Integer id) {
+        log.info("Get user by id: {}", id);
+        Optional<User> optUser = userService.getUser(id);
+        return optUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(path = "/{id}/friends")
+    public List<User> friends(@PathVariable("id") Integer id) {
+        log.info("User's friends with id: {}", id);
+        return userService.friends(id);
+    }
+
+    @PutMapping(path = "/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addFriend(@PathVariable("id") Integer userId, @PathVariable("friendId") Integer friendId) {
+
+        log.info("Add to id: {}, friend: {}", userId, friendId);
+        if (userId.equals(friendId)) {
+            throw new InternalServerException("impossible to add friend with same id");
+        }
+
+        userService.addFriend(userId, friendId);
+
+    }
+
+    @DeleteMapping(path = "/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeFriend(@PathVariable("id") Integer userId, @PathVariable("friendId") Integer friendId) {
+
+        log.info("Remove from id: {}, friend: {}", userId, friendId);
+        if (userId.equals(friendId)) {
+            throw new InternalServerException("impossible to remove friend with same id");
+        }
+
+        userService.removeFriend(userId, friendId);
+
+    }
+
+    @GetMapping(path = "{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable("id") Integer userId, @PathVariable("otherId") Integer otherId) {
+        log.info("Get common user id {} friends with id {}", userId, otherId);
+        return userService.commonFriends(userId, otherId);
+    }
+
 }
