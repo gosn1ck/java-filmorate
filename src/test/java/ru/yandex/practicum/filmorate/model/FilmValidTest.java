@@ -1,11 +1,10 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.model;
 
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -30,9 +29,18 @@ class FilmValidTest {
             + "a prisoner in the gloomy jailhouse of Shawshank after being found guilty of a crime"
             + "he did not commit. The film portrays the man's unique ";
 
-    public static final LocalDate RELEASE_DATE = LocalDate.of(1967, 3, 25);
-    public static final int DURATION = 100;
-    public static final String FILM_NAME = "The Shawshank Redemption";
+    private static final LocalDate RELEASE_DATE = LocalDate.of(1967, 3, 25);
+    private static final int DURATION = 100;
+
+    private static final Mpa MPA;
+
+    private static final String FILM_NAME = "The Shawshank Redemption";
+
+    static {
+        MPA = new Mpa();
+        MPA.setId(1);
+        MPA.setName("PG-13");
+    }
     @Autowired
     private Validator validator;
 
@@ -44,6 +52,7 @@ class FilmValidTest {
         film.setDescription(FILM_DESCRIPTION);
         film.setReleaseDate(RELEASE_DATE);
         film.setDuration(DURATION);
+        film.setMpa(MPA);
 
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
         assertEquals(0, validates.size());
@@ -58,6 +67,7 @@ class FilmValidTest {
         filmEmptyName.setDescription(FILM_DESCRIPTION);
         filmEmptyName.setReleaseDate(RELEASE_DATE);
         filmEmptyName.setDuration(DURATION);
+        filmEmptyName.setMpa(MPA);
 
         Set<ConstraintViolation<Film>> validates = validator.validate(filmEmptyName);
         assertTrue(validates.size() > 0);
@@ -67,6 +77,7 @@ class FilmValidTest {
         filmNullName.setDescription(FILM_DESCRIPTION);
         filmNullName.setReleaseDate(RELEASE_DATE);
         filmNullName.setDuration(DURATION);
+        filmNullName.setMpa(MPA);
 
         validates = validator.validate(filmNullName);
         assertTrue(validates.size() > 0);
@@ -82,6 +93,7 @@ class FilmValidTest {
         film.setDescription(DESCRIPTION_201_SYMBOLS);
         film.setReleaseDate(RELEASE_DATE);
         film.setDuration(DURATION);
+        film.setMpa(MPA);
 
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
         assertTrue(validates.size() > 0);
@@ -98,6 +110,7 @@ class FilmValidTest {
         film.setDescription(DESCRIPTION_200_SYMBOLS);
         film.setReleaseDate(RELEASE_DATE);
         film.setDuration(DURATION);
+        film.setMpa(MPA);
 
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
         assertEquals(0, validates.size());
@@ -112,6 +125,7 @@ class FilmValidTest {
         film1890.setDescription(FILM_DESCRIPTION);
         film1890.setReleaseDate(LocalDate.of(1890, 3, 25));
         film1890.setDuration(DURATION);
+        film1890.setMpa(MPA);
 
         Set<ConstraintViolation<Film>> validates = validator.validate(film1890);
         assertTrue(validates.size() > 0);
@@ -123,6 +137,7 @@ class FilmValidTest {
         film1967.setDescription(FILM_DESCRIPTION);
         film1967.setReleaseDate(LocalDate.of(1895, 12, 27));
         film1967.setDuration(DURATION);
+        film1967.setMpa(MPA);
 
         validates = validator.validate(film1967);
         assertTrue(validates.size() > 0);
@@ -139,6 +154,7 @@ class FilmValidTest {
         filmNegative.setDescription(FILM_DESCRIPTION);
         filmNegative.setReleaseDate(RELEASE_DATE);
         filmNegative.setDuration(-100);
+        filmNegative.setMpa(MPA);
 
         Set<ConstraintViolation<Film>> validates = validator.validate(filmNegative);
         assertTrue(validates.size() > 0);
@@ -150,6 +166,7 @@ class FilmValidTest {
         filmZero.setDescription(FILM_DESCRIPTION);
         filmZero.setReleaseDate(RELEASE_DATE);
         filmZero.setDuration(0);
+        filmZero.setMpa(MPA);
 
         validates = validator.validate(filmZero);
         assertTrue(validates.size() > 0);
