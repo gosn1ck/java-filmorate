@@ -6,6 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.FriendshipRepository;
+import ru.yandex.practicum.filmorate.repository.InMemoryFriendshipRepository;
 import ru.yandex.practicum.filmorate.repository.InMemoryUserRepository;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
 import ru.yandex.practicum.filmorate.service.friend.InMemoryFriendManager;
@@ -31,7 +33,9 @@ class UserServiceTest {
     @Test
     void beforeEach() {
         UserRepository userRepository = new InMemoryUserRepository();
-        userService = new UserService(userRepository, new InMemoryFriendManager(userRepository));
+        FriendshipRepository friendshipRepository = new InMemoryFriendshipRepository();
+        userService = new UserService(userRepository,
+                new InMemoryFriendManager(userRepository, friendshipRepository));
     }
 
     @DisplayName("Пользователь добавлен в сервис")

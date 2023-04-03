@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Friendship;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.FriendshipRepository;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
 
 import java.util.List;
@@ -19,6 +21,9 @@ public class InMemoryFriendManager implements FriendManager {
     @Qualifier("InMemory")
     private final UserRepository userRepository;
 
+    @Qualifier("InMemory")
+    private final FriendshipRepository friendshipRepository;
+
     @Override
     public void add(Integer userId, Integer friendId) {
         var optUser = userRepository.findById(userId);
@@ -27,8 +32,23 @@ public class InMemoryFriendManager implements FriendManager {
         var optFriend = userRepository.findById(friendId);
         optFriend.orElseThrow(() -> new NotFoundException("friend with id %d not found", friendId));
 
-        optUser.get().getFriends().add(optFriend.get().getId());
-        optFriend.get().getFriends().add(optUser.get().getId());
+        var optFriendship = friendshipRepository.findByUserAndFriendId(optUser.get().getId(), optFriend.get().getId());
+        if (optFriendship.isEmpty()) {
+            var friendship = new Friendship();
+            friendship.setUserId(optUser.get().getId());
+            friendship.setFriendId(optFriend.get().getId());
+            friendship.setIsConfirmed(true);
+            friendshipRepository.save(friendship);
+        }
+
+        optFriendship = friendshipRepository.findByUserAndFriendId(optFriend.get().getId(), optUser.get().getId());
+        if (optFriendship.isEmpty()) {
+            var friendship = new Friendship();
+            friendship.setUserId(optFriend.get().getId());
+            friendship.setFriendId(optUser.get().getId());
+            friendship.setIsConfirmed(true);
+            friendshipRepository.save(friendship);
+        }
     }
 
     @Override
@@ -39,8 +59,8 @@ public class InMemoryFriendManager implements FriendManager {
         var optFriend = userRepository.findById(friendId);
         optFriend.orElseThrow(() -> new NotFoundException("friend with id %d not found", friendId));
 
-        optUser.get().getFriends().remove(optFriend.get().getId());
-        optFriend.get().getFriends().remove(optUser.get().getId());
+        friendshipRepository.deleteByUserAndFriendId(userId, friendId);
+        friendshipRepository.deleteByUserAndFriendId(friendId, userId);
     }
 
     @Override
@@ -48,8 +68,9 @@ public class InMemoryFriendManager implements FriendManager {
         var optUser = userRepository.findById(id);
         optUser.orElseThrow(() -> new NotFoundException("user with id %d not found", id));
 
-        var user = optUser.get();
-        return user.getFriends().stream()
+        return friendshipRepository.findAll().stream()
+                .filter(friendship -> friendship.getUserId().equals(id))
+                .map(Friendship::getFriendId)
                 .map(userRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -64,16 +85,8 @@ public class InMemoryFriendManager implements FriendManager {
         var optOther = userRepository.findById(otherId);
         optOther.orElseThrow(() -> new NotFoundException("man with id %d not found", otherId));
 
-        var common = optUser.get().getFriends().stream()
-                .map(userRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
-        var otherFriends = optOther.get().getFriends().stream()
-                .map(userRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+        var common = getFriends(userId);
+        var otherFriends = getFriends(otherId);
         common.retainAll(otherFriends);
         return common;
     }

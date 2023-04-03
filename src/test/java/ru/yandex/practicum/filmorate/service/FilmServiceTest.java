@@ -7,10 +7,7 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.FilmRepository;
-import ru.yandex.practicum.filmorate.repository.InMemoryFilmRepository;
-import ru.yandex.practicum.filmorate.repository.InMemoryUserRepository;
-import ru.yandex.practicum.filmorate.repository.UserRepository;
+import ru.yandex.practicum.filmorate.repository.*;
 import ru.yandex.practicum.filmorate.service.friend.InMemoryFriendManager;
 import ru.yandex.practicum.filmorate.service.like.InMemoryLikeManager;
 import ru.yandex.practicum.filmorate.service.like.LikeManager;
@@ -36,7 +33,9 @@ class FilmServiceTest {
     @Test
     void beforeEach() {
         UserRepository userRepository = new InMemoryUserRepository();
-        this.userService = new UserService(userRepository, new InMemoryFriendManager(userRepository));
+        FriendshipRepository friendshipRepository = new InMemoryFriendshipRepository();
+        this.userService = new UserService(userRepository,
+                new InMemoryFriendManager(userRepository, friendshipRepository));
 
         FilmRepository filmRepository = new InMemoryFilmRepository();
         LikeManager likeManager = new InMemoryLikeManager(filmRepository, userRepository);
