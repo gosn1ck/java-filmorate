@@ -23,12 +23,12 @@ public class DbGenreRepository implements GenreRepository {
 
     @Override
     public List<Genre> findAll() {
-        return jdbcTemplate.query("select genre_id, genre_name from genres", this::mapRowToGenre);
+        return jdbcTemplate.query("SELECT genre_id, genre_name FROM genres", this::mapRowToGenre);
     }
 
     @Override
     public Optional<Genre> findById(Integer id) {
-        List<Genre> results = jdbcTemplate.query("select genre_id, genre_name from genres where genre_id=?",
+        List<Genre> results = jdbcTemplate.query("SELECT genre_id, genre_name FROM genres WHERE genre_id=?",
                 this::mapRowToGenre,
                 id);
         return results.size() == 0 ?
@@ -39,7 +39,7 @@ public class DbGenreRepository implements GenreRepository {
 
     @Override
     public Genre save(Genre genre) {
-        jdbcTemplate.update("INSERT INTO mpas (?, ?)", genre.getId(), genre.getName());
+        jdbcTemplate.update("INSERT INTO genres (genre_id, genre_name) VALUES (?, ?)", genre.getId(), genre.getName());
         return genre;
     }
 
