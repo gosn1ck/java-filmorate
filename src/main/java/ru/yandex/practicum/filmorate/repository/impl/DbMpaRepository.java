@@ -23,12 +23,12 @@ public class DbMpaRepository implements MpaRepository {
 
     @Override
     public List<Mpa> findAll() {
-        return jdbcTemplate.query("select mpa_id, mpa_name from mpas", this::mapRowToMpa);
+        return jdbcTemplate.query("SELECT mpa_id, mpa_name FROM mpas", this::mapRowToMpa);
     }
 
     @Override
     public Optional<Mpa> findById(Integer id) {
-        List<Mpa> results = jdbcTemplate.query("select mpa_id, mpa_name from mpas where mpa_id=?",
+        List<Mpa> results = jdbcTemplate.query("SELECT mpa_id, mpa_name FROM mpas WHERE mpa_id=?",
                 this::mapRowToMpa,
                 id);
         return results.size() == 0 ?
@@ -39,7 +39,7 @@ public class DbMpaRepository implements MpaRepository {
 
     @Override
     public Mpa save(Mpa mpa) {
-        jdbcTemplate.update("INSERT INTO mpas (?, ?)", mpa.getId(), mpa.getName());
+        jdbcTemplate.update("INSERT INTO mpas (mpa_id, mpa_name) VALUES (?, ?)", mpa.getId(), mpa.getName());
         return mpa;
     }
 
