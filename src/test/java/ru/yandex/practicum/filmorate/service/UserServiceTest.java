@@ -177,8 +177,7 @@ class UserServiceTest {
         assertEquals(friend.getId(), userFriends.get(0).getId());
 
         val friendFriends = userService.friends(friend.getId());
-        assertEquals(1, friendFriends.size());
-        assertEquals(user.getId(), friendFriends.get(0).getId());
+        assertEquals(0, friendFriends.size());
 
     }
 
@@ -233,9 +232,6 @@ class UserServiceTest {
 
         val userFriends = userService.friends(user.getId());
         assertEquals(1, userFriends.size());
-
-        val friendFriends = userService.friends(friend.getId());
-        assertEquals(1, friendFriends.size());
 
         userService.removeFriend(user.getId(), friend.getId());
 
