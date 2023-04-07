@@ -8,8 +8,12 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.*;
-import ru.yandex.practicum.filmorate.service.friend.InMemoryFriendManager;
-import ru.yandex.practicum.filmorate.service.like.InMemoryLikeManager;
+import ru.yandex.practicum.filmorate.repository.impl.InMemoryFilmRepository;
+import ru.yandex.practicum.filmorate.repository.impl.InMemoryFriendshipRepository;
+import ru.yandex.practicum.filmorate.repository.impl.InMemoryLikeRepository;
+import ru.yandex.practicum.filmorate.repository.impl.InMemoryUserRepository;
+import ru.yandex.practicum.filmorate.service.friend.FriendManagerImpl;
+import ru.yandex.practicum.filmorate.service.like.LikeManagerImpl;
 import ru.yandex.practicum.filmorate.service.like.LikeManager;
 
 import java.time.LocalDate;
@@ -35,10 +39,11 @@ class FilmServiceTest {
         UserRepository userRepository = new InMemoryUserRepository();
         FriendshipRepository friendshipRepository = new InMemoryFriendshipRepository();
         this.userService = new UserService(userRepository,
-                new InMemoryFriendManager(userRepository, friendshipRepository));
+                new FriendManagerImpl(userRepository, friendshipRepository));
 
         FilmRepository filmRepository = new InMemoryFilmRepository();
-        LikeManager likeManager = new InMemoryLikeManager(filmRepository, userRepository);
+        LikeRepository likeRepository = new InMemoryLikeRepository();
+        LikeManager likeManager = new LikeManagerImpl(filmRepository, userRepository, likeRepository);
         this.filmService = new FilmService(filmRepository, likeManager);
     }
 

@@ -16,4 +16,12 @@ public class Friendship {
     @NotNull(message = "confirmed should not be null")
     private Boolean isConfirmed;
 
+    public Friendship() {
+    }
+
+    public Friendship(Integer userId, Integer friendId, Boolean isConfirmed) {
+        this.userId = userId;
+        this.friendId = friendId;
+        this.isConfirmed = isConfirmed;
+    }
 }

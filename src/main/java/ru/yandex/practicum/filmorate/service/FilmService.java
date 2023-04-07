@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -11,14 +10,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class FilmService {
     private Integer currentId = 0;
 
-    @Qualifier("InMemory")
     private final FilmRepository filmRepository;
-    @Qualifier("InMemory")
     private final LikeManager likeManager;
+
+    public FilmService(@Qualifier("Db") FilmRepository filmRepository, LikeManager likeManager) {
+        this.filmRepository = filmRepository;
+        this.likeManager = likeManager;
+    }
 
     public List<Film> getFilms() {
         return filmRepository.findAll();

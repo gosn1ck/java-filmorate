@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
@@ -11,15 +10,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
     private Integer currentId = 0;
-
-    @Qualifier("InMemory")
     private final UserRepository userRepository;
-
-    @Qualifier("InMemory")
     private final FriendManager friendManager;
+
+    public UserService(@Qualifier("Db") UserRepository userRepository,
+                       FriendManager friendManager) {
+        this.userRepository = userRepository;
+        this.friendManager = friendManager;
+    }
 
     public List<User> getUsers() {
         return userRepository.findAll();

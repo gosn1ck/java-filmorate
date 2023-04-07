@@ -29,10 +29,20 @@ public class Film {
     @JsonIgnore
     private Set<Integer> likes = new HashSet<>();
 
-    @JsonIgnore
-    private Set<Integer> genres = new HashSet<>();
+    private Set<Genre> genres = new HashSet<>();
 
     @NotNull(message = "Mpa should not be null")
     private Mpa mpa;
 
+    public Film() {
+    }
+
+    public Film(Integer id, String name, String description, LocalDate releaseDate, Integer duration, Mpa mpa) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.mpa = mpa;
+    }
 }
