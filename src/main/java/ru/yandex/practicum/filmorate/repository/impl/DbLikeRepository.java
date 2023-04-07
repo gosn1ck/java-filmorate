@@ -44,7 +44,8 @@ public class DbLikeRepository implements LikeRepository {
     @Override
     public List<Film> popularFilms(List<Film> films, Integer count) {
         List<Integer> film_id = jdbcTemplate.query(
-                "SELECT film_id FROM LIKES GROUP BY film_id ORDER BY count(*) desc LIMIT ?",
+                "SELECT f.FILM_ID FROM FILMS as F LEFT JOIN LIKES as L ON f.FILM_ID = L.FILM_ID \n"
+                        + "GROUP BY f.film_id ORDER BY count(distinct L.FILM_ID) desc LIMIT ?",
                 this::mapRowToFilmId,
                 count);
         return film_id.stream()
