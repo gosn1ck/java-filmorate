@@ -8,9 +8,7 @@ import ru.yandex.practicum.filmorate.repository.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.LikeRepository;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class LikeManagerImpl implements LikeManager {
