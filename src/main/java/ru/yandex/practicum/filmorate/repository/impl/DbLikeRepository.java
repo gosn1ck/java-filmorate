@@ -30,7 +30,7 @@ public class DbLikeRepository implements LikeRepository {
     @Override
     public void save(Film film, User user) {
         jdbcTemplate.update(
-                "INSERT INTO likes (film_id, user_id) values (?, ?)",
+                "INSERT INTO likes (film_id, user_id) VALUES (?, ?)",
                 film.getId(), user.getId());
     }
 
@@ -44,12 +44,13 @@ public class DbLikeRepository implements LikeRepository {
     @Override
     public List<Film> popularFilms(List<Film> films, Integer count) {
         List<Integer> film_id = jdbcTemplate.query(
-                "SELECT f.FILM_ID FROM FILMS as F LEFT JOIN LIKES as L ON f.FILM_ID = L.FILM_ID \n"
-                        + "GROUP BY f.film_id ORDER BY count(distinct L.FILM_ID) desc LIMIT ?",
+                "SELECT f.FILM_ID FROM FILMS AS F LEFT JOIN LIKES AS L ON f.FILM_ID = L.FILM_ID \n"
+                        + "GROUP BY f.film_id ORDER BY count(distinct L.FILM_ID) DESC LIMIT ?",
                 this::mapRowToFilmId,
                 count);
         return film_id.stream()
                 .map(filmRepository::findById)
+                .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
     }

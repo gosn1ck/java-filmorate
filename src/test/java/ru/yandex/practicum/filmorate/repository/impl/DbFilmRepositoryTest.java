@@ -46,7 +46,7 @@ class DbFilmRepositoryTest {
     private FilmRepository underTest;
     @Autowired
     @Qualifier("Db")
-    private MpaRepository maMpaRepository;
+    private MpaRepository mpaRepository;
     @Autowired
     @Qualifier("Db")
     private GenreRepository genreRepository;
