@@ -35,14 +35,14 @@ public class DbFilmRepository implements FilmRepository {
     @Override
     public List<Film> findAll() {
         return jdbcTemplate.query(
-                "select film_id, film_name, description, release_date, duration, mpa_id from films",
+                "SELECT film_id, film_name, description, release_date, duration, mpa_id FROM films",
                 this::mapRowToFilm);
     }
 
     @Override
     public Optional<Film> findById(Integer id) {
         List<Film> results = jdbcTemplate.query(
-                "select film_id, film_name, description, release_date, duration, mpa_id from films where film_id=?",
+                "SELECT film_id, film_name, description, release_date, duration, mpa_id FROM films WHERE film_id=?",
                 this::mapRowToFilm,
                 id);
         return results.size() == 0 ?
@@ -55,7 +55,7 @@ public class DbFilmRepository implements FilmRepository {
         var optMpa = mpaRepository.findById(film.getMpa().getId());
         optMpa.orElseThrow(() -> new NotFoundException("mpa with id %d not found", film.getMpa().getId()));
         jdbcTemplate.update(
-                "INSERT INTO films (film_id, film_name, description, release_date, duration, mpa_id) values (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO films (film_id, film_name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?, ?)",
                 film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId());
 
         updateFilmGenres(film);
@@ -77,7 +77,7 @@ public class DbFilmRepository implements FilmRepository {
         film.setGenres(new HashSet<>(genres));
 
         jdbcTemplate.update(
-                "update films set film_name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? where film_id = ?",
+                "UPDATE films SET film_name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? WHERE film_id = ?",
                 film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId(), film.getId());
 
         return Optional.of(film);
@@ -116,10 +116,10 @@ public class DbFilmRepository implements FilmRepository {
 
     public List<Genre> findGenres(Integer filmId) {
         return jdbcTemplate.query(
-                "select g.genre_id, g.genre_name \n" +
-                        "from film_genre as fg \n" +
-                        "  join genres as g on g.genre_id = fg.genre_id\n" +
-                        "  where film_id =? order by g.genre_id",
+                "SELECT g.genre_id, g.genre_name \n" +
+                        "FROM film_genre AS fg \n" +
+                        "  JOIN genres AS g ON g.genre_id = fg.genre_id\n" +
+                        "  WHERE film_id =? ORDER BY g.genre_id",
                 this::mapRowToGenre,
                 filmId);
     }
