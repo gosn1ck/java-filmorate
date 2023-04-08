@@ -24,14 +24,14 @@ public class BdFriendshipRepository implements FriendshipRepository {
     @Override
     public List<Friendship> findAll() {
         return jdbcTemplate.query(
-                "select user_id, friend_id, confirmed from friends",
+                "SELECT user_id, friend_id, confirmed FROM friends",
                 this::mapRowToFriendship);
     }
 
     @Override
     public Optional<Friendship> findByUserAndFriendId(Integer id, Integer friendId) {
         List<Friendship> results = jdbcTemplate.query(
-                "select user_id, friend_id, confirmed from friends where user_id=? and friend_id=?",
+                "SELECT user_id, friend_id, confirmed FROM friends WHERE user_id=? AND friend_id=?",
                 this::mapRowToFriendship,
                 id,
                 friendId);
@@ -43,7 +43,7 @@ public class BdFriendshipRepository implements FriendshipRepository {
     @Override
     public Friendship save(Friendship friendship) {
         jdbcTemplate.update(
-                "INSERT INTO friends (user_id, friend_id, confirmed) values (?, ?, ?)",
+                "INSERT INTO friends (user_id, friend_id, confirmed) VALUES (?, ?, ?)",
                 friendship.getUserId(), friendship.getFriendId(), friendship.getIsConfirmed());
 
         return friendship;
