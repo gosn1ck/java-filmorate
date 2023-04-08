@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface LikeRepository {
     void save(Film film, User user);
+
     void delete(Film film, User user);
+
     List<Film> popularFilms(List<Film> films, Integer count);
+
 }
