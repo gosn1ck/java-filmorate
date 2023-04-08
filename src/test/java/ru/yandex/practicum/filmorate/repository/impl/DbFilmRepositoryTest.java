@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Import;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.repository.FilmRepository;
+import ru.yandex.practicum.filmorate.repository.GenreRepository;
+import ru.yandex.practicum.filmorate.repository.MpaRepository;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -40,13 +43,13 @@ class DbFilmRepositoryTest {
 
     @Autowired
     @Qualifier("Db")
-    private DbFilmRepository underTest;
+    private FilmRepository underTest;
     @Autowired
     @Qualifier("Db")
-    private DbMpaRepository maMpaRepository;
+    private MpaRepository maMpaRepository;
     @Autowired
     @Qualifier("Db")
-    private DbGenreRepository genreRepository;
+    private GenreRepository genreRepository;
 
     @DisplayName("Фильм сохраняется")
     @Test

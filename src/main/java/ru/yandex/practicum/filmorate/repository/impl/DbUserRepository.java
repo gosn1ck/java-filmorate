@@ -25,14 +25,14 @@ public class DbUserRepository implements UserRepository {
     @Override
     public List<User> findAll() {
         return jdbcTemplate.query(
-                "select user_id, user_name, email, login, birthday from users",
+                "SELECT user_id, user_name, email, login, birthday FROM users",
                 this::mapRowToUser);
     }
 
     @Override
     public Optional<User> findById(Integer id) {
         List<User> results = jdbcTemplate.query(
-                "select user_id, user_name, email, login, birthday from users where user_id=?",
+                "SELECT user_id, user_name, email, login, birthday FROM users WHERE user_id=?",
                 this::mapRowToUser,
                 id);
         return results.size() == 0 ?
@@ -43,7 +43,7 @@ public class DbUserRepository implements UserRepository {
     @Override
     public User save(User user) {
         jdbcTemplate.update(
-                "INSERT INTO users (user_id, user_name, email, login, birthday) values (?, ?, ?, ?, ?)",
+                "INSERT INTO users (user_id, user_name, email, login, birthday) VALUES (?, ?, ?, ?, ?)",
                 user.getId(), user.getName(), user.getEmail(), user.getLogin(), user.getBirthday());
 
         return user;
@@ -55,7 +55,7 @@ public class DbUserRepository implements UserRepository {
         optUser.orElseThrow(() -> new NotFoundException("user with id %d not found", user.getId()));
 
         jdbcTemplate.update(
-                "update users set user_name = ?, email = ?, login = ?, birthday = ? where user_id  = ?",
+                "UPDATE users set user_name = ?, email = ?, login = ?, birthday = ? WHERE user_id  = ?",
                 user.getName(), user.getEmail(), user.getLogin(), user.getBirthday(), user.getId());
 
         return Optional.of(user);
