@@ -18,7 +18,7 @@ public class Film {
     @NotEmpty(message = "Name should not be empty")
     private String name;
 
-    @Size(max=200, message = "Description must be max 200 characters long")
+    @Size(max = 200, message = "Description must be max 200 characters long")
     private String description;
 
     @ReleaseDate
