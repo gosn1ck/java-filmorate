@@ -7,7 +7,11 @@ import java.util.Optional;
 
 public interface UserRepository {
     List<User> findAll();
+
     Optional<User> findById(Integer id);
+
     User save(User user);
+
     Optional<User> update(User user);
+
 }
