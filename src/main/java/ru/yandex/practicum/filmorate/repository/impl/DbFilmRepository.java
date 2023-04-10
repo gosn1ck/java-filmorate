@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.repository.impl;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -10,11 +11,14 @@ import ru.yandex.practicum.filmorate.repository.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.GenreRepository;
 import ru.yandex.practicum.filmorate.repository.MpaRepository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @Qualifier("Db")
@@ -85,16 +89,27 @@ public class DbFilmRepository implements FilmRepository {
 
     private void updateFilmGenres(Film film) {
         jdbcTemplate.update("DELETE FROM film_genre WHERE film_id = ?", film.getId());
-        var genres = film.getGenres();
-        genres.forEach(genre -> {
-                var optGenre = genreRepository.findById(genre.getId());
-                optGenre.orElseThrow(() -> new NotFoundException("genre with id %d not found", genre.getId()));
+        var filmGenres = new ArrayList<>(film.getGenres());
+        var idsFound = genreRepository.findAllById(filmGenres.stream().map(Genre::getId).collect(Collectors.toList()))
+                .stream().map(Genre::getId).collect(Collectors.toList());
+
+        filmGenres.stream().map(Genre::getId).filter(id -> !idsFound.contains(id)).forEach(id -> {
+            throw new NotFoundException("genre with id %d not found", id);
         });
 
-        genres.forEach(genre ->
-            jdbcTemplate.update(
-                    "INSERT INTO film_genre (film_id, genre_id) values (?, ?)",
-                    film.getId(), genre.getId()));
+        jdbcTemplate.batchUpdate("INSERT INTO film_genre (film_id, genre_id) values (?, ?)",
+            new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                    ps.setInt(1, film.getId());
+                    ps.setInt(2, filmGenres.get(i).getId());
+                }
+
+                @Override
+                public int getBatchSize() {
+                    return filmGenres.size();
+                }
+            });
     }
 
     private Film mapRowToFilm(ResultSet row, int rowNum) throws SQLException {

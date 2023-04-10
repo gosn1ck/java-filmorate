@@ -35,4 +35,9 @@ public class InMemoryGenreRepository implements GenreRepository {
 
         return Optional.empty();
     }
+
+    @Override
+    public List<Genre> findAllById(List<Integer> ids) {
+        return new ArrayList<>();
+    }
 }

@@ -1,10 +1,14 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Friendship {
 
     @NotNull(message = "user id should not be null")
@@ -16,12 +20,4 @@ public class Friendship {
     @NotNull(message = "confirmed should not be null")
     private Boolean isConfirmed;
 
-    public Friendship() {
-    }
-
-    public Friendship(Integer userId, Integer friendId, Boolean isConfirmed) {
-        this.userId = userId;
-        this.friendId = friendId;
-        this.isConfirmed = isConfirmed;
-    }
 }

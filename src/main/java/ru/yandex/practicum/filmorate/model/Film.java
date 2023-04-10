@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validator.ReleaseDate;
 
 import javax.validation.constraints.*;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@NoArgsConstructor
 public class Film {
 
     private Integer id;
@@ -33,9 +35,6 @@ public class Film {
 
     @NotNull(message = "Mpa should not be null")
     private Mpa mpa;
-
-    public Film() {
-    }
 
     public Film(Integer id, String name, String description, LocalDate releaseDate, Integer duration, Mpa mpa) {
         this.id = id;

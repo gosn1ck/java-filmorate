@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 public class User {
     private Integer id;
 
@@ -21,9 +23,6 @@ public class User {
 
     @Past(message = "Birthday should be in the past")
     private LocalDate birthday;
-
-    public User() {
-    }
 
     public User(Integer id, String name, String login, String email, LocalDate birthday) {
         this.id = id;
