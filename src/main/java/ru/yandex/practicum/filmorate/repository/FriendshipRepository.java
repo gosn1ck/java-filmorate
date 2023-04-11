@@ -7,7 +7,11 @@ import java.util.Optional;
 
 public interface FriendshipRepository {
     List<Friendship> findAll();
+
     Optional<Friendship> findByUserAndFriendId(Integer id, Integer friendId);
+
     Friendship save(Friendship friendship);
+
     void deleteByUserAndFriendId(Integer id, Integer friendId);
+
 }

@@ -1,5 +1,13 @@
 # java-filmorate
-Template repository for Filmorate project.
+## Description
+This is a simple backend application like imbd.com
+
+## Frameworks and Technologies
+- Java 11
+- Spring Boot
+- JDBC, SQL, H2
+- Maven, Junit
+- Postman
 
 # ER Diagram
 ![er-filmorate.png](er-filmorate.png)
@@ -7,7 +15,7 @@ Template repository for Filmorate project.
 
 ## SQL queries:
 
-Film names with genres:
+- Film names with genres:
 ```
 SELECT 
   f.film_name, 
@@ -18,7 +26,7 @@ FROM
   JOIN genres AS g ON fg.genre_id = g.genre_id
 ```
 
-Film's likes amount:
+- Film's likes amount:
 ```
 SELECT 
   f.film_name, 
@@ -29,7 +37,7 @@ FROM
 GROUP BY 
   f.film_name
 ```
-Nikolay's friends:
+- Nikolay's friends:
 ```
 SELECT 
   fu.user_name 
@@ -40,3 +48,6 @@ FROM
 WHERE 
   u.user_name = 'Nikolay'
 ```
+
+## Support
+please contact me at gosn1ck@yandex.ru

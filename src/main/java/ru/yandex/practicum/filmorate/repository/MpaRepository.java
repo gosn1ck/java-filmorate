@@ -7,6 +7,9 @@ import java.util.Optional;
 
 public interface MpaRepository {
     List<Mpa> findAll();
+
     Optional<Mpa> findById(Integer id);
+
     Mpa save(Mpa mpa);
+
 }

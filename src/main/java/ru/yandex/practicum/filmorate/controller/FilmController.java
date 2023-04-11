@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,11 +80,9 @@ public class FilmController {
 
     @GetMapping(path = "/popular")
     public List<Film> popularFilms(
-            @RequestParam(value = "count", defaultValue = "10", required = false) Integer count) {
+            @RequestParam(value = "count", defaultValue = "10", required = false)
+            @Min(value = 1, message = "Count must be greater than zero") Integer count) {
         log.info("Get popular films with count {}", count);
-        if (count <= 0) {
-            throw new IllegalArgumentException("Count must be greater than zero");
-        }
         return filmsService.popularFilms(count);
     }
 

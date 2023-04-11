@@ -1,8 +1,9 @@
-package ru.yandex.practicum.filmorate.repository;
+package ru.yandex.practicum.filmorate.repository.impl;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.repository.GenreRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,5 +34,10 @@ public class InMemoryGenreRepository implements GenreRepository {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public List<Genre> findAllById(List<Integer> ids) {
+        return new ArrayList<>();
     }
 }

@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service.friend;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -14,15 +13,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
-@Qualifier("InMemory")
-public class InMemoryFriendManager implements FriendManager {
+public class FriendManagerImpl implements FriendManager {
 
-    @Qualifier("InMemory")
     private final UserRepository userRepository;
-
-    @Qualifier("InMemory")
     private final FriendshipRepository friendshipRepository;
+
+    public FriendManagerImpl(@Qualifier("Db") UserRepository userRepository,
+                             @Qualifier("Db") FriendshipRepository friendshipRepository) {
+        this.userRepository = userRepository;
+        this.friendshipRepository = friendshipRepository;
+    }
 
     @Override
     public void add(Integer userId, Integer friendId) {
@@ -46,7 +46,7 @@ public class InMemoryFriendManager implements FriendManager {
             var friendship = new Friendship();
             friendship.setUserId(optFriend.get().getId());
             friendship.setFriendId(optUser.get().getId());
-            friendship.setIsConfirmed(true);
+            friendship.setIsConfirmed(false);
             friendshipRepository.save(friendship);
         }
     }
@@ -70,6 +70,7 @@ public class InMemoryFriendManager implements FriendManager {
 
         return friendshipRepository.findAll().stream()
                 .filter(friendship -> friendship.getUserId().equals(id))
+                .filter(Friendship::getIsConfirmed)
                 .map(Friendship::getFriendId)
                 .map(userRepository::findById)
                 .filter(Optional::isPresent)

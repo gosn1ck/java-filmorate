@@ -8,8 +8,12 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.*;
-import ru.yandex.practicum.filmorate.service.friend.InMemoryFriendManager;
-import ru.yandex.practicum.filmorate.service.like.InMemoryLikeManager;
+import ru.yandex.practicum.filmorate.repository.impl.InMemoryFilmRepository;
+import ru.yandex.practicum.filmorate.repository.impl.InMemoryFriendshipRepository;
+import ru.yandex.practicum.filmorate.repository.impl.InMemoryLikeRepository;
+import ru.yandex.practicum.filmorate.repository.impl.InMemoryUserRepository;
+import ru.yandex.practicum.filmorate.service.friend.FriendManagerImpl;
+import ru.yandex.practicum.filmorate.service.like.LikeManagerImpl;
 import ru.yandex.practicum.filmorate.service.like.LikeManager;
 
 import java.time.LocalDate;
@@ -26,7 +30,7 @@ class FilmServiceTest {
     public static final int DURATION = 100;
     public static final String NAME = "The Shawshank Redemption";
 
-    private FilmService filmService;
+    private FilmService underTest;
     private UserService userService;
 
     @BeforeEach
@@ -35,11 +39,12 @@ class FilmServiceTest {
         UserRepository userRepository = new InMemoryUserRepository();
         FriendshipRepository friendshipRepository = new InMemoryFriendshipRepository();
         this.userService = new UserService(userRepository,
-                new InMemoryFriendManager(userRepository, friendshipRepository));
+                new FriendManagerImpl(userRepository, friendshipRepository));
 
         FilmRepository filmRepository = new InMemoryFilmRepository();
-        LikeManager likeManager = new InMemoryLikeManager(filmRepository, userRepository);
-        this.filmService = new FilmService(filmRepository, likeManager);
+        LikeRepository likeRepository = new InMemoryLikeRepository();
+        LikeManager likeManager = new LikeManagerImpl(filmRepository, userRepository, likeRepository);
+        this.underTest = new FilmService(filmRepository, likeManager);
     }
 
     @DisplayName("Фильм добавлен в сервис")
@@ -51,14 +56,14 @@ class FilmServiceTest {
         film.setReleaseDate(RELEASE_DATE);
         film.setDuration(DURATION);
 
-        val savedFilm = filmService.addFilm(film);
+        val savedFilm = underTest.addFilm(film);
         assertEquals(1, savedFilm.getId());
         assertEquals(film.getName(), savedFilm.getName());
         assertEquals(film.getDescription(), savedFilm.getDescription());
         assertEquals(film.getDuration(), savedFilm.getDuration());
         assertEquals(film.getReleaseDate(), savedFilm.getReleaseDate());
 
-        val films = filmService.getFilms();
+        val films = underTest.getFilms();
         assertEquals(1, films.size());
 
         val savedFilmList = films.get(0);
@@ -68,7 +73,7 @@ class FilmServiceTest {
         assertEquals(film.getDuration(), savedFilmList.getDuration());
         assertEquals(film.getReleaseDate(), savedFilmList.getReleaseDate());
 
-        val optionalFilm = filmService.getFilm(1);
+        val optionalFilm = underTest.getFilm(1);
         val savedByIdFilm = optionalFilm.get();
         assertEquals(film.getName(), savedByIdFilm.getName());
         assertEquals(film.getDescription(), savedByIdFilm.getDescription());
@@ -86,14 +91,14 @@ class FilmServiceTest {
         film.setReleaseDate(RELEASE_DATE);
         film.setDuration(DURATION);
 
-        filmService.addFilm(film);
+        underTest.addFilm(film);
 
         var newName = "new name";
         film.setName(newName);
         var newDescription = "new description";
         film.setDescription(newDescription);
 
-        val optFilm = filmService.updateFilm(film);
+        val optFilm = underTest.updateFilm(film);
         val updatedFilm = optFilm.get();
         assertEquals(film.getId(), updatedFilm.getId());
         assertEquals(film.getName(), updatedFilm.getName());
@@ -106,7 +111,7 @@ class FilmServiceTest {
         notExistingFilm.setReleaseDate(RELEASE_DATE);
         notExistingFilm.setDuration(DURATION);
 
-        val optNotExistingFilm = filmService.updateFilm(notExistingFilm);
+        val optNotExistingFilm = underTest.updateFilm(notExistingFilm);
         assertTrue(optNotExistingFilm.isEmpty());
 
     }
@@ -115,7 +120,7 @@ class FilmServiceTest {
     @Test
     void shouldReturnEmptyFilm() {
 
-        val optionalFilm = filmService.getFilm(9999);
+        val optionalFilm = underTest.getFilm(9999);
         assertTrue(optionalFilm.isEmpty());
 
     }
@@ -128,7 +133,7 @@ class FilmServiceTest {
         film.setDescription(DESCRIPTION);
         film.setReleaseDate(RELEASE_DATE);
         film.setDuration(DURATION);
-        filmService.addFilm(film);
+        underTest.addFilm(film);
 
         val user = new User();
         user.setName("Nick Name");
@@ -137,8 +142,8 @@ class FilmServiceTest {
         user.setBirthday(LocalDate.of(1999, 10, 12));
         userService.addUser(user);
 
-        filmService.addLike(film.getId(), user.getId());
-        val films = filmService.popularFilms(1);
+        underTest.addLike(film.getId(), user.getId());
+        val films = underTest.popularFilms(1);
         assertEquals(1, films.size());
         assertEquals(film.getId(), films.get(0).getId());
 
@@ -152,7 +157,7 @@ class FilmServiceTest {
         film.setDescription(DESCRIPTION);
         film.setReleaseDate(RELEASE_DATE);
         film.setDuration(DURATION);
-        filmService.addFilm(film);
+        underTest.addFilm(film);
 
         val user = new User();
         user.setName("Nick Name");
@@ -162,11 +167,11 @@ class FilmServiceTest {
         userService.addUser(user);
 
         val exceptionLikeFilm = assertThrows(NotFoundException.class, () ->
-                filmService.addLike(film.getId(), 9999));
+                underTest.addLike(film.getId(), 9999));
         assertEquals("user with id 9999 not found", exceptionLikeFilm.getMessage());
 
         val exceptionLikeUser = assertThrows(NotFoundException.class, () ->
-                filmService.addLike(9999, user.getId()));
+                underTest.addLike(9999, user.getId()));
         assertEquals("film with id 9999 not found", exceptionLikeUser.getMessage());
 
     }
@@ -179,7 +184,7 @@ class FilmServiceTest {
         film.setDescription(DESCRIPTION);
         film.setReleaseDate(RELEASE_DATE);
         film.setDuration(DURATION);
-        filmService.addFilm(film);
+        underTest.addFilm(film);
 
         val user = new User();
         user.setName("Nick Name");
@@ -188,10 +193,10 @@ class FilmServiceTest {
         user.setBirthday(LocalDate.of(1999, 10, 12));
         userService.addUser(user);
 
-        filmService.addLike(film.getId(), user.getId());
+        underTest.addLike(film.getId(), user.getId());
         assertEquals(1, film.getLikes().size());
 
-        filmService.removeLike(user.getId(), film.getId());
+        underTest.removeLike(user.getId(), film.getId());
         assertEquals(0, film.getLikes().size());
     }
 
@@ -203,7 +208,7 @@ class FilmServiceTest {
         film.setDescription(DESCRIPTION);
         film.setReleaseDate(RELEASE_DATE);
         film.setDuration(DURATION);
-        filmService.addFilm(film);
+        underTest.addFilm(film);
 
         val user = new User();
         user.setName("Nick Name");
@@ -213,11 +218,11 @@ class FilmServiceTest {
         userService.addUser(user);
 
         val exceptionLikeFilm = assertThrows(NotFoundException.class, () ->
-                filmService.removeLike(film.getId(), 9999));
+                underTest.removeLike(film.getId(), 9999));
         assertEquals("user with id 9999 not found", exceptionLikeFilm.getMessage());
 
         val exceptionLikeUser = assertThrows(NotFoundException.class, () ->
-                filmService.removeLike(9999, user.getId()));
+                underTest.removeLike(9999, user.getId()));
         assertEquals("film with id 9999 not found", exceptionLikeUser.getMessage());
 
     }
@@ -230,21 +235,21 @@ class FilmServiceTest {
         film1.setDescription(DESCRIPTION);
         film1.setReleaseDate(RELEASE_DATE);
         film1.setDuration(DURATION);
-        filmService.addFilm(film1);
+        underTest.addFilm(film1);
 
         val film2 = new Film();
         film2.setName(NAME);
         film2.setDescription(DESCRIPTION);
         film2.setReleaseDate(RELEASE_DATE);
         film2.setDuration(DURATION);
-        filmService.addFilm(film2);
+        underTest.addFilm(film2);
 
         val film3 = new Film();
         film3.setName(NAME);
         film3.setDescription(DESCRIPTION);
         film3.setReleaseDate(RELEASE_DATE);
         film3.setDuration(DURATION);
-        filmService.addFilm(film3);
+        underTest.addFilm(film3);
 
         val user1 = new User();
         user1.setName("Nick Name");
@@ -267,21 +272,21 @@ class FilmServiceTest {
         user3.setBirthday(LocalDate.of(1999, 10, 12));
         userService.addUser(user3);
 
-        filmService.addLike(film1.getId(), user1.getId());
-        var films = filmService.popularFilms(1);
+        underTest.addLike(film1.getId(), user1.getId());
+        var films = underTest.popularFilms(1);
         assertEquals(1, films.size());
         assertEquals(film1.getId(), films.get(0).getId());
 
-        filmService.addLike(film2.getId(), user1.getId());
-        filmService.addLike(film2.getId(), user2.getId());
-        films = filmService.popularFilms(2);
+        underTest.addLike(film2.getId(), user1.getId());
+        underTest.addLike(film2.getId(), user2.getId());
+        films = underTest.popularFilms(2);
         assertEquals(2, films.size());
         assertEquals(film2.getId(), films.get(0).getId());
 
-        filmService.addLike(film3.getId(), user1.getId());
-        filmService.addLike(film3.getId(), user2.getId());
-        filmService.addLike(film3.getId(), user3.getId());
-        films = filmService.popularFilms(3);
+        underTest.addLike(film3.getId(), user1.getId());
+        underTest.addLike(film3.getId(), user2.getId());
+        underTest.addLike(film3.getId(), user3.getId());
+        films = underTest.popularFilms(3);
         assertEquals(3, films.size());
         assertEquals(film3.getId(), films.get(0).getId());
 
@@ -292,11 +297,11 @@ class FilmServiceTest {
         user4.setBirthday(LocalDate.of(1999, 10, 12));
         userService.addUser(user4);
 
-        filmService.addLike(film1.getId(), user1.getId());
-        filmService.addLike(film1.getId(), user2.getId());
-        filmService.addLike(film1.getId(), user3.getId());
-        filmService.addLike(film1.getId(), user4.getId());
-        films = filmService.popularFilms(1);
+        underTest.addLike(film1.getId(), user1.getId());
+        underTest.addLike(film1.getId(), user2.getId());
+        underTest.addLike(film1.getId(), user3.getId());
+        underTest.addLike(film1.getId(), user4.getId());
+        films = underTest.popularFilms(1);
         assertEquals(1, films.size());
         assertEquals(film1.getId(), films.get(0).getId());
 
